@@ -1,0 +1,47 @@
+/*****************
+ * 아지트 월말정산
+ * 해당 파일은 커맨드 입력 시 달력 버튼생성까지만
+ *****************/
+
+const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+
+module.exports = {
+  // 슬래시 명령어 정의
+  data: new SlashCommandBuilder()
+    .setName('월말정산')            // 명령어 이름
+    .setDescription('월말정산 데이터를 확인합니다.'),  // 명령어 설명
+
+  // 명령어 실행 시 호출되는 함수
+  async execute(interaction) {
+    // ===== 1️⃣ 버튼 생성 =====
+    // 버튼 1~12월 생성
+    const rows = [];
+    let currentRow = new ActionRowBuilder();
+
+    for (let month = 1; month <= 12; month++) {
+      // 버튼 생성
+      currentRow.addComponents(
+        new ButtonBuilder()
+          .setCustomId(`month_${month}`)  // 클릭 시 식별용 ID
+          .setLabel(`${month}월`)           // 버튼에 표시될 글자
+          .setStyle(ButtonStyle.Primary)   // 파랑 버튼
+      );
+
+      // 4개 버튼마다 한 줄(row) 완성
+      if (month % 4 === 0) {
+        rows.push(currentRow);         // 완성된 row를 배열에 추가
+        currentRow = new ActionRowBuilder(); // 새로운 row 생성
+      }
+    }
+
+    // 남은 버튼(row) 처리 (12월 끝남)
+    if (currentRow.components.length > 0) {
+      rows.push(currentRow);
+    }
+
+    // ===== 2️⃣ 버튼 메시지 전송 =====
+    // interaction.reply: 슬래시 명령어에 대한 답장
+    // components: 버튼 배열 (ActionRowBuilder)
+    await interaction.reply({ content: '월을 선택하세요:', components: rows });
+  },
+};

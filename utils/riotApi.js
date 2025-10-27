@@ -38,7 +38,7 @@ async function getPuuidByRiotId(gameName, tagLine) {
  * @param {number} count - 최대 매치 개수
  * @returns {Promise<string[]>} 매치 ID 배열
  */
-async function getMatchIdsByPuuid(puuid, startTime, endTime, queue = 450, count = 1) {
+async function getMatchIdsByPuuid(puuid, startTime, endTime, queue = 450, count = 30) {
   const url = `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids`;
   try {
     const res = await axios.get(url, {
@@ -59,13 +59,13 @@ async function getMatchIdsByPuuid(puuid, startTime, endTime, queue = 450, count 
  * @param {string} matchId - 조회할 매치 ID
  * @returns {Promise<Array>} participants 배열 
  */
-async function getMatchParticipants(matchId) {
+async function getMatchDetail(matchId) {
   const url = `https://asia.api.riotgames.com/lol/match/v5/matches/${matchId}`;
   try {
     const res = await axios.get(url, {
       headers: { 'X-Riot-Token': process.env.RIOT_API_KEY },
     });
-    return res.data.info.participants; // 10명 참가자 배열만 반환
+    return res.data.info; 
   } catch (err) {
     console.error(`❌ 매치 상세 조회 실패: ${matchId}`);
     if (err.response) console.error(err.response.data);
@@ -73,4 +73,4 @@ async function getMatchParticipants(matchId) {
   }
 }
 
-module.exports = { getPuuidByRiotId, getMatchIdsByPuuid, getMatchParticipants };
+module.exports = { getPuuidByRiotId, getMatchIdsByPuuid, getMatchDetail };

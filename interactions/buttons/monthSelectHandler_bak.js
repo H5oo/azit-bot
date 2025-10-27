@@ -3,10 +3,9 @@
  *****************/
 
 const members = require('../../data/members');
-const { getMatchIdsByPuuid, getMatchDetail } = require('../../utils/riotApi');
+const { getPuuidByRiotId, getMatchIdsByPuuid, getMatchDetail } = require('../../utils/riotApi');
 const { getMonthTimestamps } = require('../../utils/date');
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
-const { rateLimitedFetch } = require('../../utils/rateLimiter.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle  } = require('discord.js');
 
 const selectedMonth = 10;      // 예: 사용자가 선택한 10월
 const currentYear = new Date().getFullYear();
@@ -15,13 +14,11 @@ const { startTime, endTime } = getMonthTimestamps(currentYear, selectedMonth);
 // startTime보다 30분 빠르게 조회
 const queryStartTime = startTime - 30 * 60; // 30분 = 1800초
 
-// ===== Handler =====
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 module.exports = {
   async execute(interaction, selectedMonth) {
     try {
-      // ===== 1️interaction 즉시 처리 (버튼 클릭 응답) =====
-      await interaction.deferUpdate(); // interaction을 디퍼(defer) 처리
-
       // 1️⃣ 기존 메시지의 모든 버튼 비활성화
       const disabledRows = interaction.message.components.map(row => {
         return new ActionRowBuilder().addComponents(
@@ -31,16 +28,15 @@ module.exports = {
         );
       });
 
-      // 메시지 업데이트 (버튼 비활성화)
-      await interaction.editReply({
+      // 2️⃣ 메시지를 업데이트하여 버튼 비활성화 적용
+      await interaction.update({
         content: `✅ ${selectedMonth}월 월말정산을 선택했습니다.`,
         components: disabledRows,
       });
 
-      // ===== 2️⃣ 진행 메시지 (followUp) =====
-      await interaction.followUp({
+      await interaction.reply({ 
         content: `✅ ${selectedMonth}월 정산을 진행중입니다....`,
-        ephemeral: true,
+        ephemeral: true 
       });
 
       const checkedMatchIds = new Set(); // 이미 처리한 매치 ID 기록
@@ -49,12 +45,12 @@ module.exports = {
         // 이미 count가 10이면 더 이상 처리하지 않음
         if ((member.count || 0) >= 10) continue;
 
-        const { name, tag, puuid } = member;
+        const { name, tag } = member;
         try {
             const puuid = member.puuid;
             
-            // 매치 ID 조회 (Rate Limit 적용)
-            const matchIds = await rateLimitedFetch(getMatchIdsByPuuid, puuid, queryStartTime, endTime);
+            // 매치 ID 조회
+            const matchIds = await getMatchIdsByPuuid(puuid, queryStartTime, endTime);
             console.log(`✅ ${name}#${tag} → ${matchIds.length}개의 매치 조회`);
 
             // 각 매치별 상세 정보 조회
@@ -62,10 +58,12 @@ module.exports = {
               // 이미 처리한 매치면 건너뜀
               if (checkedMatchIds.has(matchId)) continue;
 
-              const matchData = await rateLimitedFetch(getMatchDetail, matchId);
+              const matchData = await getMatchDetail(matchId);
+              await sleep(1000); 
+              
+              const gameEnd = matchData.gameEndTimestamp;
               
               // startTime 기준 필터
-              const gameEnd = matchData.gameEndTimestamp;
               if (gameEnd <= startTime) continue;
 
               // 1️⃣ 내 팀 추출

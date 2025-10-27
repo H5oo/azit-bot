@@ -40,7 +40,7 @@ module.exports = {
     }
 
     // 새로운 멤버 객체 생성
-    const newMember = { name, tag, puuid, isLeader: false, count: 0 };
+    const newMember = { name, tag, puuid, count: 0 };
     members.push(newMember);
 
     // members.js 파일 업데이트

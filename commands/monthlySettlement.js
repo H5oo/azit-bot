@@ -5,7 +5,7 @@
 
 const { SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-//let lastUsedTime = 0; // 서버 전체 쿨타임 기록
+let lastUsedTime = 0; // 서버 전체 쿨타임 기록
 
 module.exports = {
   // 슬래시 명령어 정의
@@ -23,20 +23,20 @@ module.exports = {
       return interaction.reply({ content: '권한이 없습니다.', ephemeral: true });
     }
 
-    // const now = Date.now();
-    // const cooldownAmount = 3 * 60 * 1000; // 3분 = 180,000ms
+    const now = Date.now();
+    const cooldownAmount = 3 * 60 * 1000; // 3분 = 180,000ms
 
-    // // 서버 전체 쿨타임 확인
-    // if (now - lastUsedTime < cooldownAmount) {
-    //   const timeLeft = Math.ceil((cooldownAmount - (now - lastUsedTime)) / 1000);
-    //   return interaction.reply({ 
-    //     content: `잠시만 기다려주세요! ${timeLeft}초 후에 다시 사용할 수 있습니다.`, 
-    //     ephemeral: true 
-    //   });
-    // }
+    // 서버 전체 쿨타임 확인
+    if (now - lastUsedTime < cooldownAmount) {
+      const timeLeft = Math.ceil((cooldownAmount - (now - lastUsedTime)) / 1000);
+      return interaction.reply({ 
+        content: `잠시만 기다려주세요! ${timeLeft}초 후에 다시 사용할 수 있습니다.`, 
+        ephemeral: true 
+      });
+    }
 
-    // // 쿨타임 갱신
-    // lastUsedTime = now;
+    // 쿨타임 갱신
+    lastUsedTime = now;
 
     // ===== 1️⃣ 버튼 생성 =====
     // 버튼 1~12월 생성

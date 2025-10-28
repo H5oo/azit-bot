@@ -12,6 +12,8 @@ const { rateLimitedFetch } = require('../../utils/rateLimiter.js');
 module.exports = {
   async execute(interaction, selectedMonth) {
     try {
+      const startTimestamp = Date.now(); // ⬅ 시작 시간 기록
+
       // ===== 1️interaction 즉시 처리 (버튼 클릭 응답) =====
       await interaction.deferUpdate(); // interaction을 디퍼(defer) 처리
 
@@ -104,6 +106,13 @@ module.exports = {
         }
       }
 
+      // ===== 처리 완료 후 시간 계산 =====
+      const endTimestamp = Date.now();
+      const durationMs = endTimestamp - startTimestamp;
+      const durationSec = Math.floor(durationMs / 1000);
+      const minutes = Math.floor(durationSec / 60);
+      const seconds = durationSec % 60;
+
       // members를 count 기준 내림차순 정렬
       const sortedMembers = [...members].sort((a, b) => (b.count || 0) - (a.count || 0));
 
@@ -115,7 +124,8 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle(`${selectedMonth}월 월말정산 결과`)
         .setColor(0x1abc9c)
-        .setDescription(description);
+        .setDescription(description)
+        .addFields({ name: '총 소요 시간', value: `${minutes}분 ${seconds}초`, inline: true });
 
       // interaction.reply()는 이미 처리 메시지를 보냈으므로 followUp 사용
       await interaction.followUp({ embeds: [embed] });

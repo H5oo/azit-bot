@@ -39,16 +39,20 @@ module.exports = {
     await interaction.reply({ content: `${name}#${tag} 등록 중...`, ephemeral: true });
 
     // puuid 조회
-    let puuid = '';
     try {
-      puuid = await getPuuidByRiotId(name, tag);
+      const riotUser = await getPuuidByRiotId(name, tag);
     } catch (err) {
       console.error(err);
       return interaction.editReply('클랜원 등록 실패: 아이디와 태그를 확인해주세요');
     }
 
     // 새로운 멤버 객체 생성
-    const newMember = { name, tag, puuid, count: 0 };
+    const newMember = {
+      name: riotUser.gameName,   // API에서 받은 실제 이름
+      tag: riotUser.tagLine,     // API에서 받은 실제 태그
+      puuid: riotUser.puuid,
+      count: 0
+    };
     members.push(newMember);
 
     // members.js 파일 업데이트

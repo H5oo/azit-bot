@@ -19,9 +19,7 @@ async function getPuuidByRiotId(gameName, tagLine) {
     const res = await axios.get(url, {
       headers: { 'X-Riot-Token': RIOT_API_KEY },
     });
-    const { puuid } = res.data;
-    if (!puuid) throw new Error('PUUID not found in response');
-    return puuid;
+    return res.data; // { puuid, gameName, tagLine }
   } catch (err) {
     console.error(`❌ Riot API 요청 실패: ${gameName}#${tagLine}`);
     if (err.response) console.error(err.response.data);

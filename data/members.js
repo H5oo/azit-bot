@@ -39,6 +39,12 @@ module.exports = [
     "count": 0
   },
   {
+    "name": "길가다멍줍",
+    "tag": "KR1",
+    "puuid": "FAlXKwBG9ADj5RGyQcn6E7g0bmImBXBSBPWrkuA-4OXJgo49gSpmeFIPQdCjTtEbN1ioYsOj-T06uA",
+    "count": 0
+  },
+  {
     "name": "ingchu",
     "tag": "KR1",
     "puuid": "Mvk89ut6RbyBfl9UIN92NkUnQCxzuUFMxyhZZZHKqkWqJ6boxJHGdndlMGVSEs369l9SQw8QVwDLSg",
@@ -105,7 +111,7 @@ module.exports = [
     "count": 0
   },
   {
-    "name": "T1 cheers",
+    "name": "T1 Cheers",
     "tag": "KR1",
     "puuid": "Hfnfl2UBUOFTN6IWlwG6STMHJTdUgtrHREVyGDjGHO_sR0lYdImZcWwK3XC2bfZ88555RMERYl84EA",
     "count": 0
@@ -135,13 +141,13 @@ module.exports = [
     "count": 0
   },
   {
-    "name": "민수",
+    "name": "민 수",
     "tag": "1735",
     "puuid": "KLOQowTZhfAP5AE_fEAceadtGFyyhdmNeCKRVWXUrcQ4PGioi70VssEQSjcXX94CIqDCWMvFIsRQpg",
     "count": 0
   },
   {
-    "name": "피곤",
+    "name": "피 곤",
     "tag": "try",
     "puuid": "K5joixcEF4KVqrEut9erFzBBs8y8Tn3ADcS-emu-x0Pyt65xx-b4dXmCF_Qjy7qCbQM0DBVVDepGDA",
     "count": 0

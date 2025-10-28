@@ -72,12 +72,14 @@ module.exports = {
                             ? matchData.participants.slice(0, 5)
                             : matchData.participants.slice(5, 10);
 
-              // 2️⃣ 팀 내 members 포함 여부 확인
+              // 내 정보
+              const me = matchData.participants[myIndex];
+
+              // 나를 제외한 팀원 중에서 members에 등록된 사람이 있는지 확인
               const hasAnyMember = myTeam.some(p =>
-                                                  members.some(m =>
-                                                      p.riotIdGameName === m.name && p.riotIdTagline === m.tag
-                                                  )
-                                              );
+                p.puuid !== me.puuid && // 나 제외
+                members.some(m => p.riotIdGameName === m.name && p.riotIdTagline === m.tag)
+              );
 
               if (!hasAnyMember) continue;
 

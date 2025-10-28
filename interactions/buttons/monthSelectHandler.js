@@ -8,13 +8,6 @@ const { getMonthTimestamps } = require('../../utils/date');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const { rateLimitedFetch } = require('../../utils/rateLimiter.js');
 
-const selectedMonth = 10;      // 예: 사용자가 선택한 10월
-const currentYear = new Date().getFullYear();
-const { startTime, endTime } = getMonthTimestamps(currentYear, selectedMonth);
-
-// startTime보다 30분 빠르게 조회
-const queryStartTime = startTime - 30 * 60; // 30분 = 1800초
-
 // ===== Handler =====
 module.exports = {
   async execute(interaction, selectedMonth) {
@@ -43,6 +36,12 @@ module.exports = {
         ephemeral: true,
       });
 
+      const currentYear = new Date().getFullYear();
+      const { startTime, endTime } = getMonthTimestamps(currentYear, selectedMonth);
+
+      // startTime보다 30분 빠르게 조회
+      const queryStartTime = startTime - 30 * 60; // 30분 = 1800초
+
       const checkedMatchIds = new Set(); // 이미 처리한 매치 ID 기록
 
       for (const member of members) {
@@ -51,7 +50,6 @@ module.exports = {
 
         const { name, tag, puuid } = member;
         try {
-            const puuid = member.puuid;
             
             // 매치 ID 조회 (Rate Limit 적용)
             const matchIds = await rateLimitedFetch(getMatchIdsByPuuid, puuid, queryStartTime, endTime);

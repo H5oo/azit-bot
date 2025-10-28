@@ -5,13 +5,18 @@ const fs = require('fs');
 const path = require('path');
 const membersPath = path.join(__dirname, '../data/members.js');
 
+if (process.env.DISABLE_UPDATE_USERS === 'true') {
+  module.exports = {}; // 명령어 자체를 내보내지 않음
+  return;
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('사용자갱신')             // 명령어 이름 (띄어쓰기 불가, 한글 가능)
-    .setDescription('등록된 사용자 정보를 갱신합니다.'),  // 설명
+    .setName('클랜원갱신')             // 명령어 이름 (띄어쓰기 불가, 한글 가능)
+    .setDescription('등록된 클랜원 정보를 갱신합니다.'),  // 설명
 
   async execute(interaction) {
-    await interaction.reply({ content: '사용자 정보를 갱신 중입니다...', ephemeral: true });
+    await interaction.reply({ content: '클랜원 정보를 갱신 중입니다...', ephemeral: true });
 
     for (const member of members) {
         if (!member.puuid) {          // puuid가 없을 때만 API 호출
@@ -26,6 +31,6 @@ module.exports = {
     'utf-8'
     );
 
-    await interaction.editReply('모든 사용자 갱신 완료!');
+    await interaction.editReply('모든 클랜원 갱신 완료!');
   }
 };

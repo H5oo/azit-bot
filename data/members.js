@@ -1,3 +1,6 @@
+/**
+ * 사용자 목록
+ */
 module.exports = [
   {
     "name": "김그린을그린",
@@ -159,6 +162,18 @@ module.exports = [
     "name": "하슈아빠",
     "tag": "0904",
     "puuid": "ubEkZOTrlbQakz3rJarfyZSjPmuTinh4wFWxNltZO7dqdxErXqJrXQtB1C7xOI7nd0Paj3vrlJPyjg",
+    "count": 0
+  },
+  {
+    "name": "료 진",
+    "tag": "KR2",
+    "puuid": "qgn-ZUuQUvrPABszWaytpxscJOh0FkZ0R4OSl9aUSGRssm0mPMz5FBEx7enpMONPn3W-9O1arK9ldw",
+    "count": 0
+  },
+  {
+    "name": "회초리든다",
+    "tag": "KR1",
+    "puuid": "a0QpXPvoZxUk_JksebXZFQtV0qwypmsAqwg6mdN-gQ_YT3mvbfBH5UD2cqsF2A-pB80921ad1ZjNtw",
     "count": 0
   }
 ];

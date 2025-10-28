@@ -11,7 +11,12 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  commands.push(command.data.toJSON());
+  // 명령어 정의 객체만 등록
+  if ('data' in command && 'execute' in command) {
+    commands.push(command.data.toJSON());
+  } else {
+    console.log(`[경고] ${file} 파일은 data 또는 execute 속성이 없습니다.`);
+  }
 }
 
 const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);

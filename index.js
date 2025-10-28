@@ -11,7 +11,11 @@ client.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  client.commands.set(command.data.name, command);
+  // 명령어 정의 객체만 등록
+  if ('data' in command && 'execute' in command) {
+    client.commands.set(command.data.name, command);
+  }
+  
 }
 
 // 이벤트 등록

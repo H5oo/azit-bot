@@ -8,6 +8,10 @@ const { getMonthTimestamps } = require('../../utils/date');
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder } = require('discord.js');
 const { rateLimitedFetch } = require('../../utils/rateLimiter.js');
 
+// ===== 설정값 =====
+const MAX_COUNT_LIMIT = 10;       // 카운트 제한 수치
+const ENFORCE_MAX_COUNT = true;   // true: 제한 적용 / false: 제한 없이 누적
+
 // ===== Handler =====
 module.exports = {
   async execute(interaction, selectedMonth) {
@@ -47,14 +51,16 @@ module.exports = {
       const checkedMatchIds = new Set(); // 이미 처리한 매치 ID 기록
 
       for (const member of members) {
-        // 이미 count가 10이면 더 이상 처리하지 않음
-        if ((member.count || 0) >= 10) continue;
+        // member 체크
+        if (ENFORCE_MAX_COUNT && (member.count || 0) >= MAX_COUNT_LIMIT) continue;
 
         const { name, tag, puuid } = member;
         try {
             
             // 매치 ID 조회 (Rate Limit 적용)
-            const matchIds = await rateLimitedFetch(getMatchIdsByPuuid, puuid, queryStartTime, endTime);
+            let count;
+            if (!ENFORCE_MAX_COUNT) count = 100;
+            const matchIds = await rateLimitedFetch(getMatchIdsByPuuid, puuid, queryStartTime, endTime, count);
             console.log(`✅ ${name}#${tag} → ${matchIds.length}개의 매치 조회`);
 
             // 각 매치별 상세 정보 조회
@@ -92,8 +98,8 @@ module.exports = {
                   p.riotIdGameName === m.name && p.riotIdTagline === m.tag
                 );
                 if (matchedMember) {
-                  // count가 이미 10이면 증가시키지 않고 패스
-                  if ((matchedMember.count || 0) >= 10) continue;
+                  // 설정값에 따라 증가시키지 않고 패스
+                  if (ENFORCE_MAX_COUNT && (matchedMember.count || 0) >= MAX_COUNT_LIMIT) continue;
 
                   matchedMember.count = (matchedMember.count || 0) + 1;
                 }
@@ -127,8 +133,9 @@ module.exports = {
         .setDescription(description)
         .addFields({ name: '총 소요 시간', value: `${minutes}분 ${seconds}초`, inline: true });
 
-      // interaction.reply()는 이미 처리 메시지를 보냈으므로 followUp 사용
-      await interaction.followUp({ embeds: [embed] });
+      // 기존: interaction.followUp() → ❌ Token 만료 위험
+      // 변경: 채널에 직접 메시지 전송 → ✅ 안전
+      await interaction.channel.send({ embeds: [embed] });
 
       // ===== count 초기화 =====
       for (const m of members) {

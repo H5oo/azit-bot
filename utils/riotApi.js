@@ -36,12 +36,12 @@ async function getPuuidByRiotId(gameName, tagLine) {
  * @param {number} count - 최대 매치 개수
  * @returns {Promise<string[]>} 매치 ID 배열
  */
-async function getMatchIdsByPuuid(puuid, startTime, endTime, queue = 450, count = 30) {
+async function getMatchIdsByPuuid(puuid, startTime, endTime, count = 30, start = 0, queue = 450) {
   const url = `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids`;
   try {
     const res = await axios.get(url, {
       headers: { 'X-Riot-Token': process.env.RIOT_API_KEY },
-      params: { startTime, endTime, queue, count },
+      params: { startTime, endTime, queue, start, count },
     });
     return res.data; // 문자열 배열: [matchId1, matchId2, ...]
   } catch (err) {

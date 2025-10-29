@@ -21,7 +21,7 @@ module.exports = {
 
   async execute(interaction) {
     // ===== 역할 기반 권한 체크 =====
-    const allowedRoles = ['1432287432547762187'];
+    const allowedRoles  = process.env.ALLOWED_ROLES.split(',');
     const hasPermission = interaction.member.roles.cache.some(role => allowedRoles.includes(role.id));
     
     if (!hasPermission) {

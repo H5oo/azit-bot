@@ -27,6 +27,14 @@ module.exports = {
             .setRequired(true)),
 
   async execute(interaction) {
+    // ===== 역할 기반 권한 체크 =====
+    const allowedRoles  = process.env.ALLOWED_ROLES.split(',');
+    const hasPermission = interaction.member.roles.cache.some(role => allowedRoles.includes(role.id));
+    
+    if (!hasPermission) {
+      return interaction.reply({ content: '권한이 없습니다.', ephemeral: true });
+    }
+    
     const oldName = interaction.options.getString('old_name');
     const oldTag  = interaction.options.getString('old_tag');
     const newName = interaction.options.getString('new_name');
